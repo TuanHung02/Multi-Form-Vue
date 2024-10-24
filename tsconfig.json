@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "esnext",  // hoặc 'es2020', 'es2022' nếu cần
+    "module": "esnext",  // Đảm bảo giá trị module là 'esnext', 'es2020', hoặc các giá trị mới hơn
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true, // Bật chế độ strict để TypeScript kiểm tra chặt chẽ hơn
+    "lib": ["esnext", "dom"], // Hoặc "es2020", "es2022" nếu bạn cần tương thích
+    "types": ["vite/client"], // Nếu bạn đang dùng Vite
+    "resolveJsonModule": true // Hỗ trợ import file JSON
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue"]
+}
