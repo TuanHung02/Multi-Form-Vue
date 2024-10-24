@@ -5,8 +5,11 @@
                 <p>Must</p>
                 <label for="reason">Lý do muốn ứng tuyển vào công ty</label>
             </div>
-            <textarea id="reason" v-model="form.reason" maxlength="1000" placeholder="Mô tả về bản thân"></textarea>
+            <textarea id="reason" v-model="form.reason" maxlength="1000" placeholder="Mô tả về bản thân"
+                :class="{ 'error-border': errors.reason }"></textarea>
             <div>{{ form.reason.length }}/1000</div>
+            <span v-if="errors.reason" class="error-text">{{ errors.reason }}</span>
+
         </div>
 
         <div class="form-group">
@@ -15,10 +18,13 @@
                 <label for="salary">Mức lương mong muốn</label>
             </div>
             <input class="input-info" type="text" id="salary" v-model="form.salary" required
-                placeholder="Nhập mức lương mong muốn" />
+                :class="{ 'error-border': errors.salary }" placeholder="Nhập mức lương mong muốn" />
+            <span v-if="errors.salary" class="error-text">{{ errors.salary }}</span>
+
         </div>
     </div>
-    <div class="btn" @click="emitData">Hoàn thành</div>
+    <div class="btn" :class="{ 'btn-active': isFormValid() }" :disabled="!isFormValid()" @click="validateForm">Hoàn
+        thành</div>
 
 </template>
 
@@ -32,15 +38,59 @@ const form = ref({
     salary: '',
 });
 
+const errors = ref({
+    reason: '',
+    salary: '',
+
+});
+
+
 onMounted(() => {
-    const savedData = localStorage.getItem('profileData');
+    const savedData = localStorage.getItem('confirmFormData');
     if (savedData) {
         form.value = JSON.parse(savedData);
     }
 });
 
+const validateForm = () => {
+    let isValid = true;
+
+    // Validation for name
+    if (!form.value.salary) {
+        errors.value.salary = 'Mức lương mong muốn không được để trống.';
+        isValid = false;
+    } else if (form.value.salary.length > 100) {
+        errors.value.salary = 'Mức lương mong muốn không được dài quá 100 ký tự.';
+        isValid = false;
+    } else {
+        errors.value.salary = '';
+    }
+
+    if (!form.value.reason) {
+        errors.value.reason = 'Lý do muốn ứng tuyển vào công ty không được để trống.';
+        isValid = false;
+    } else if (form.value.reason.length > 1000) {
+        errors.value.reason = 'Lý do muốn ứng tuyển vào công ty không được dài quá 1000 ký tự.';
+        isValid = false;
+    } else {
+        errors.value.reason = '';
+    }
+
+    if (isValid) {
+        emitData();
+    }
+};
+
+const isFormValid = () => {
+    return form.value.reason.length > 0 &&
+        form.value.salary.length > 0 &&
+        !errors.value.reason &&
+        !errors.value.salary;
+};
+
+
 const emitData = () => {
-    localStorage.setItem('profileData', JSON.stringify(form.value));
+    localStorage.setItem('confirmFormData', JSON.stringify(form.value));
     emit('save-data', form.value);
 };
 </script>
@@ -54,6 +104,19 @@ const emitData = () => {
     border-radius: 4px;
 
 }
+
+.error-text {
+    color: rgba(237, 93, 93, 1);
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.error-border {
+    border: 1px solid rgba(237, 93, 93, 1) !important;
+    border-color: rgba(237, 93, 93, 1) !important;
+}
+
 
 .btn {
     display: flex;
@@ -74,6 +137,11 @@ const emitData = () => {
     line-height: 24px;
     color: rgba(255, 255, 255, 1);
     cursor: pointer;
+}
+
+.btn-active {
+    background-color: rgba(98, 125, 152, 1);
+    color: rgba(255, 255, 255, 1);
 }
 
 .form-group {

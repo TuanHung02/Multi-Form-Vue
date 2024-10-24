@@ -1,87 +1,111 @@
 <template>
-  <div class="item">
-    <i>
-      <slot name="icon"></slot>
-    </i>
-    <div class="details">
-      <h3>
-        <slot name="heading"></slot>
-      </h3>
-      <slot></slot>
+  <div class="form-container" v-for="(formItem) in formList" :key="formItem.id">
+    <!-- Vị trí từng làm -->
+    <div class="form-input-company">
+      <div class="input">
+
+        <input type="text" v-model="formItem.company" :class="{ 'error-border': errors[formItem.id]?.company }" required
+          placeholder="Nhập tên công ty" @blur="validateForm(formItem)" />
+        <span v-if="errors[formItem.id]?.company" class="error-text"> {{ errors[formItem.id].company }}</span>
+      </div>
     </div>
   </div>
+
+
+  <div class="add-company" @click="addCompany">
+    Thêm công ty</div>
+  <div class="btn" :disabled="!isFormValid" @click="isFormValid && emitData" :class="{ 'btn-active': isFormValid }">
+    Tiếp</div>
+
 </template>
 
-<style scoped>
-.item {
-  margin-top: 2rem;
-  display: flex;
-  position: relative;
+<script setup lang="ts">
+import { ref, onMounted, defineEmits, computed } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const emit = defineEmits(['save-data']);
+
+interface FormItem {
+  id: number;
+  company: string;
+  errors: {
+    company?: string;
+  };
 }
 
-.details {
-  flex: 1;
-  margin-left: 1rem;
-}
+const formList = ref<FormItem[]>([{ id: 1, company: '', errors: {} }]);
 
-i {
-  display: flex;
-  place-items: center;
-  place-content: center;
-  width: 32px;
-  height: 32px;
+onMounted(() => {
+  const savedData = localStorage.getItem('experiencesFormData');
+  if (savedData) {
+    formList.value = JSON.parse(savedData);
+  }
+});
 
-  color: var(--color-text);
-}
+// Thêm hàm validate
+const errors = ref<{ [key: number]: { company?: string; } }>({});
 
-h3 {
-  font-size: 1.2rem;
-  font-weight: 500;
-  margin-bottom: 0.4rem;
-  color: var(--color-heading);
-}
+const validateForm = (formItem: FormItem) => {
+  const formErrors: { company?: string; prevPosition?: string; startAt?: string; endAt?: string; jd?: string } = {};
+  let isValid = true;
 
-@media (min-width: 1024px) {
-  .item {
-    margin-top: 0;
-    padding: 0.4rem 0 1rem calc(var(--section-gap) / 2);
+  // Kiểm tra từng trường
+  if (!formItem.company || formItem.company.length > 100) {
+    formErrors.company = 'Tên công ty là bắt buộc và không quá 100 kí tự';
+    isValid = false;
   }
 
-  i {
-    top: calc(50% - 25px);
-    left: -26px;
-    position: absolute;
-    border: 1px solid var(--color-border);
-    background: var(--color-background);
-    border-radius: 8px;
-    width: 50px;
-    height: 50px;
-  }
+  // Ghi nhận lỗi cho formItem hiện tại
+  errors.value[formItem.id] = formErrors;
 
-  .item:before {
-    content: ' ';
-    border-left: 1px solid var(--color-border);
-    position: absolute;
-    left: 0;
-    bottom: calc(50% + 25px);
-    height: calc(50% - 25px);
-  }
+  return isValid;
+};
 
-  .item:after {
-    content: ' ';
-    border-left: 1px solid var(--color-border);
-    position: absolute;
-    left: 0;
-    top: calc(50% + 25px);
-    height: calc(50% - 25px);
-  }
 
-  .item:first-of-type:before {
-    display: none;
-  }
+const addCompany = () => {
+  const newId = formList.value.length + 1;
+  formList.value.push({
+    id: newId,
+    company: '',
+    errors: {}
+  });
+};
 
-  .item:last-of-type:after {
-    display: none;
-  }
-}
-</style>
+
+const isFormValid = computed(() => {
+  return formList.value.every((formItem) => validateForm(formItem));
+});
+
+
+const emitData = () => {
+  let isAllValid = true;
+
+  formList.value.forEach((formItem) => {
+    const isValid = validateForm(formItem);
+    if (!isValid) {
+      isAllValid = false;
+    }
+  });
+
+  if (!isAllValid) return;
+
+  // Save data to localStorage
+  const savedData = localStorage.getItem('experiencesFormData');
+  const parsedData: FormItem[] = savedData ? JSON.parse(savedData) : [];
+
+  formList.value.forEach((formItem) => {
+    const existingItem = parsedData.find((item: FormItem) => item.id === formItem.id);
+    if (existingItem) {
+      Object.assign(existingItem, formItem);
+    } else {
+      parsedData.push(formItem);
+    }
+  });
+
+  localStorage.setItem('experiencesFormData', JSON.stringify(parsedData));
+
+  emit('save-data', formList.value, true);
+  router.push('/confirm');
+};
+</script>

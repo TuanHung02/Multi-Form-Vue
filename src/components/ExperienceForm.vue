@@ -2,7 +2,12 @@
     <div class="form-container" v-for="(formItem) in formList" :key="formItem.id">
         <!-- Vị trí từng làm -->
         <div class="form-input-company">
-            <input type="text" v-model="formItem.company" required placeholder="Nhập tên công ty" />
+            <div class="input">
+
+                <input type="text" v-model="formItem.company" :class="{ 'error-border': errors[formItem.id]?.company }"
+                    required placeholder="Nhập tên công ty" @blur="validateForm(formItem)" />
+                <span v-if="errors[formItem.id]?.company" class="error-text"> {{ errors[formItem.id].company }}</span>
+            </div>
             <!-- SVG trash icon để xóa -->
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
                 @click="removeCompany(formItem.id)" style="cursor: pointer;">
@@ -22,8 +27,12 @@
                 <p>Must</p>
                 <label for="name">Vị trí từng làm</label>
             </div>
-            <input class="input-info" type="text" v-model="formItem.prevPosition" required
-                placeholder="Nhập vị trí từng làm" />
+            <input class="input-info" type="text" v-model="formItem.prevPosition"
+                :class="{ 'error-border': errors[formItem.id]?.prevPosition }" required
+                placeholder="Nhập vị trí từng làm" @blur="validateForm(formItem)" />
+            <span v-if="errors[formItem.id]?.prevPosition" class="error-text"> {{ errors[formItem.id].prevPosition
+                }}</span>
+
         </div>
 
         <!-- Thời gian làm việc -->
@@ -34,7 +43,9 @@
             </div>
             <div style="display: flex; align-items: center; gap: 16px;">
                 <div class="custom-date-input">
-                    <input style="width: 118px;" class="input-info" type="date" v-model="formItem.startAt" required />
+                    <input style="width: 118px;" class="input-info" type="date" v-model="formItem.startAt"
+                        :class="{ 'error-border': errors[formItem.id]?.startAt }" required
+                        @blur="validateForm(formItem)" />
                     <div class="icon-calendar">
                         <!-- <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -44,23 +55,24 @@
                         </svg> -->
                     </div>
 
+                    <span v-if="errors[formItem.id]?.startAt" class="error-text"> {{ errors[formItem.id].startAt
+                        }}</span>
                 </div>
+
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2.5 8H13.5" stroke="#BFBFBF" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
                 <div class="custom-date-input">
-                    <input style="width: 118px;" class="input-info" type="date" v-model="formItem.endAt" required />
+                    <input style="width: 118px;" class="input-info" type="date" v-model="formItem.endAt"
+                        :class="{ 'error-border': errors[formItem.id]?.endAt }" required
+                        @blur="validateForm(formItem)" />
                     <div class="icon-calendar">
-                        <!-- <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M17 3H18.5C19.8807 3 21 4.11929 21 5.5V18.5074C21 19.8881 19.8807 21.0074 18.5 21.0074H5.5C4.11929 21.0074 3 19.8881 3 18.5074V5.5C3 4.11929 4.11929 3 5.5 3H7V2.5C7 2.22386 7.22386 2 7.5 2C7.77614 2 8 2.22386 8 2.5V3H16V2.5C16 2.22386 16.2239 2 16.5 2C16.7761 2 17 2.22386 17 2.5V3ZM16 4H8V4.5C8 4.77614 7.77614 5 7.5 5C7.22386 5 7 4.77614 7 4.5V4H5.5C4.67157 4 4 4.67157 4 5.5V8H20V5.5C20 4.67157 19.3284 4 18.5 4H17V4.5C17 4.77614 16.7761 5 16.5 5C16.2239 5 16 4.77614 16 4.5V4ZM4 9H20V18.5074C20 19.3358 19.3284 20.0074 18.5 20.0074H5.5C4.67157 20.0074 4 19.3358 4 18.5074V9Z"
-                                fill="#999999" />
-                        </svg> -->
                     </div>
 
 
+                    <span v-if="errors[formItem.id]?.endAt" class="error-text"> {{ errors[formItem.id].endAt }}</span>
                 </div>
+
             </div>
         </div>
 
@@ -69,8 +81,12 @@
             <div class="title">
                 <label for="name">Mô tả về công việc</label>
             </div>
-            <textarea v-model="formItem.jd" maxlength="1000" placeholder="Mô tả về công việc"></textarea>
+            <textarea v-model="formItem.jd" maxlength="1000" placeholder="Mô tả về công việc"
+                @blur="validateForm(formItem)" :class="{ 'error-border': errors[formItem.id]?.jd }"></textarea>
+            <span v-if="errors[formItem.id]?.jd" class="error-text"> {{ errors[formItem.id].company }}</span>
+
             <div>{{ formItem.jd ? formItem.jd.length : 0 }}/1000</div>
+
         </div>
     </div>
 
@@ -81,15 +97,18 @@
             <path d="M12 3.75V20.25" stroke="#48647F" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         Thêm công ty</div>
-    <div class="btn" @click="emitData">Tiếp</div>
+    <div class="btn" :disabled="!isFormValid" @click="emitData" :class="{ 'btn-active': isFormValid }">Tiếp</div>
+
 
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, defineEmits } from 'vue';
+import { ref, onMounted, defineEmits, computed } from 'vue';
 import { useRouter } from 'vue-router';
+
 const router = useRouter();
 const emit = defineEmits(['save-data']);
+
 interface FormItem {
     id: number;
     company: string;
@@ -97,61 +116,131 @@ interface FormItem {
     startAt: string;
     endAt: string;
     jd: string;
+    errors: {
+        company?: string;
+        prevPosition?: string;
+        startAt?: string;
+        endAt?: string;
+        jd?: string;
+    };
 }
-const formList = ref<FormItem[]>([{ id: 1, company: '', prevPosition: '', startAt: '', endAt: '', jd: '' }]);
+
+const formList = ref<FormItem[]>([{ id: 1, company: '', prevPosition: '', startAt: '', endAt: '', jd: '', errors: {} }]);
 
 onMounted(() => {
-    const savedData = localStorage.getItem('formListData');
+    const savedData = localStorage.getItem('experiencesFormData');
     if (savedData) {
         formList.value = JSON.parse(savedData);
     }
 });
 
-const addCompany = () => {
-    const newId = formList.value.length + 1;
-    formList.value.push({ id: newId, company: '', prevPosition: '', startAt: '', endAt: '', jd: '' });
+// Thêm cờ để kiểm soát việc validate
+const isSubmitAttempted = ref(false);
+
+// Thêm hàm validate
+const errors = ref<{ [key: number]: { company?: string; prevPosition?: string; startAt?: string; endAt?: string; jd?: string } }>({});
+
+const validateForm = (formItem: FormItem) => {
+    if (!isSubmitAttempted.value) return true; // Nếu chưa nhấn "Tiếp", không thực hiện validate
+
+    const formErrors: { company?: string; prevPosition?: string; startAt?: string; endAt?: string; jd?: string } = {};
+    let isValid = true;
+
+    // Kiểm tra từng trường
+    if (!formItem.company || formItem.company.length > 100) {
+        formErrors.company = 'Tên công ty là bắt buộc và không quá 100 kí tự';
+        isValid = false;
+    }
+
+    if (!formItem.prevPosition || formItem.prevPosition.length > 100) {
+        formErrors.prevPosition = 'Vị trí từng làm là bắt buộc và không quá 100 kí tự';
+        isValid = false;
+    }
+
+    if (!formItem.startAt) {
+        formErrors.startAt = 'Ngày bắt đầu là bắt buộc';
+        isValid = false;
+    }
+
+    if (!formItem.endAt) {
+        formErrors.endAt = 'Ngày kết thúc là bắt buộc';
+        isValid = false;
+    }
+
+    if (formItem.jd.length > 1000) {
+        formErrors.jd = 'Mô tả công việc không được quá 1000 kí tự';
+        isValid = false;
+    }
+
+    // Ghi nhận lỗi cho formItem hiện tại
+    errors.value[formItem.id] = formErrors;
+
+    return isValid;
 };
 
+// Thêm công ty
+const addCompany = () => {
+    const newId = formList.value.length + 1;
+    formList.value.push({
+        id: newId,
+        company: '',
+        prevPosition: '',
+        startAt: '',
+        endAt: '',
+        jd: '',
+        errors: {}
+    });
+};
+
+// Xóa công ty
 const removeCompany = (id: number) => {
     const index = formList.value.findIndex((formItem) => formItem.id === id);
     if (index !== -1) {
         formList.value.splice(index, 1);
-        localStorage.setItem('formListData', JSON.stringify(formList.value));
+        localStorage.setItem('experiencesFormData', JSON.stringify(formList.value));
     }
 };
 
+// Kiểm tra xem form có hợp lệ hay không
+const isFormValid = computed(() => {
+    return formList.value.every((formItem) => validateForm(formItem));
+});
+
+// Xử lý khi nhấn "Tiếp"
 const emitData = () => {
-    // Lấy dữ liệu hiện tại từ localStorage
-    const savedData = localStorage.getItem('formListData');
+    isSubmitAttempted.value = true; // Đánh dấu rằng đã nhấn "Tiếp"
+
+    let isAllValid = true;
+
+    formList.value.forEach((formItem) => {
+        const isValid = validateForm(formItem);
+        if (!isValid) {
+            isAllValid = false;
+        }
+    });
+
+    if (!isAllValid) return;
+
+    // Save data to localStorage
+    const savedData = localStorage.getItem('experiencesFormData');
     const parsedData: FormItem[] = savedData ? JSON.parse(savedData) : [];
 
     formList.value.forEach((formItem) => {
-        // Kiểm tra xem formItem với id đã tồn tại trong parsedData hay chưa
-        console.log(parsedData, '-' , formList);
         const existingItem = parsedData.find((item: FormItem) => item.id === formItem.id);
-
         if (existingItem) {
-            // Nếu đã tồn tại, cập nhật phần tử với id đó
             Object.assign(existingItem, formItem);
         } else {
-            // Nếu không tồn tại, thêm phần tử mới vào mảng
             parsedData.push(formItem);
         }
     });
 
-    // Lưu lại dữ liệu đã cập nhật vào localStorage
-    localStorage.setItem('formListData', JSON.stringify(parsedData));
+    localStorage.setItem('experiencesFormData', JSON.stringify(parsedData));
 
-    // Phát ra sự kiện với dữ liệu đã cập nhật
     emit('save-data', formList.value, true);
-
-    // Chuyển hướng đến trang xác nhận
     router.push('/confirm');
 };
-
-
-
 </script>
+
 
 
 <style scoped>
@@ -164,6 +253,17 @@ const emitData = () => {
     input {
         outline: none;
     }
+}
+
+.error-text {
+    color: rgba(237, 93, 93, 1);
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.error-border {
+    border: 1px solid rgba(237, 93, 93, 1) !important;
 }
 
 .add-company {
@@ -188,7 +288,6 @@ const emitData = () => {
 }
 
 .form-input-company {
-    height: 60px;
     box-sizing: border-box;
     padding: 10px 16px 10px 16px;
     gap: 16px;
@@ -200,8 +299,14 @@ const emitData = () => {
     align-items: center;
     gap: 16px;
 
+    .input {
+
+        width: 100%;
+    }
+
     input {
-        width: 898px;
+        width: calc(100% - 20px);
+
         height: 40px;
         border-radius: 4px;
         border: 1px solid rgba(219, 219, 219, 1);
@@ -234,6 +339,11 @@ const emitData = () => {
     line-height: 24px;
     color: rgba(255, 255, 255, 1);
     cursor: pointer;
+}
+
+.btn-active {
+    background-color: rgba(98, 125, 152, 1);
+    color: rgba(255, 255, 255, 1);
 }
 
 .form-group {

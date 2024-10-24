@@ -1,4 +1,4 @@
-<template>
+ <template>
     <div class="container">
         <p class="title">Đơn ứng tuyển</p>
 
@@ -30,7 +30,6 @@
 import { RouterLink, RouterView, useRoute } from 'vue-router';
 import { ref } from 'vue';
 const route = useRoute();
-
 
 const isActive = (path: string) => {
     return route.path === path ? 'base-timeline__item--active' : '';
