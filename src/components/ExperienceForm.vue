@@ -55,8 +55,9 @@
                         </svg> -->
                     </div>
 
-                    <span v-if="errors[formItem.id]?.startAt" class="error-text"> {{ errors[formItem.id].startAt
-                        }}</span>
+                    <span style="width: 118px;" v-if="errors[formItem.id]?.startAt" class="error-text"> {{
+                        errors[formItem.id].startAt
+                    }}</span>
                 </div>
 
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -70,7 +71,8 @@
                     </div>
 
 
-                    <span v-if="errors[formItem.id]?.endAt" class="error-text"> {{ errors[formItem.id].endAt }}</span>
+                    <span style="width: 118px;" v-if="errors[formItem.id]?.endAt" class="error-text"> {{
+                        errors[formItem.id].endAt }}</span>
                 </div>
 
             </div>
@@ -97,7 +99,8 @@
             <path d="M12 3.75V20.25" stroke="#48647F" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         Thêm công ty</div>
-    <div class="btn" :disabled="!isFormValid" @click="emitData" :class="{ 'btn-active': isFormValid }">Tiếp</div>
+    <div class="btn" :disabled="!isFormValid || isFormEmpty" @click="emitData"
+        :class="{ 'btn-active': isFormValid && !isFormEmpty }">Tiếp</div>
 
 
 </template>
@@ -134,19 +137,39 @@ onMounted(() => {
     }
 });
 
-// Thêm cờ để kiểm soát việc validate
 const isSubmitAttempted = ref(false);
 
-// Thêm hàm validate
 const errors = ref<{ [key: number]: { company?: string; prevPosition?: string; startAt?: string; endAt?: string; jd?: string } }>({});
 
+const validateDateRange = (formItem: FormItem) => {
+    const formErrors: { startAt?: string; endAt?: string } = {};
+    let isValid = true;
+
+    formList.value.forEach((item) => {
+        if (item.id !== formItem.id) {
+            // Kiểm tra trùng lặp thời gian
+            const startA = new Date(formItem.startAt).getTime();
+            const endA = new Date(formItem.endAt).getTime();
+            const startB = new Date(item.startAt).getTime();
+            const endB = new Date(item.endAt).getTime();
+
+            if ((startA >= startB && startA <= endB) || (endA >= startB && endA <= endB)) {
+                formErrors.startAt = 'Khoảng thời gian làm việc trùng với công ty khác';
+                formErrors.endAt = 'Khoảng thời gian làm việc trùng với công ty khác';
+                isValid = false;
+            }
+        }
+    });
+
+    return { formErrors, isValid };
+};
+
 const validateForm = (formItem: FormItem) => {
-    if (!isSubmitAttempted.value) return true; // Nếu chưa nhấn "Tiếp", không thực hiện validate
+    if (!isSubmitAttempted.value) return true;
 
     const formErrors: { company?: string; prevPosition?: string; startAt?: string; endAt?: string; jd?: string } = {};
     let isValid = true;
 
-    // Kiểm tra từng trường
     if (!formItem.company || formItem.company.length > 100) {
         formErrors.company = 'Tên công ty là bắt buộc và không quá 100 kí tự';
         isValid = false;
@@ -172,11 +195,16 @@ const validateForm = (formItem: FormItem) => {
         isValid = false;
     }
 
-    // Ghi nhận lỗi cho formItem hiện tại
+    // Kiểm tra trùng lặp thời gian
+    const { formErrors: dateErrors, isValid: isDateValid } = validateDateRange(formItem);
+    Object.assign(formErrors, dateErrors);
+    if (!isDateValid) isValid = false;
+
     errors.value[formItem.id] = formErrors;
 
     return isValid;
 };
+
 
 // Thêm công ty
 const addCompany = () => {
@@ -201,12 +229,16 @@ const removeCompany = (id: number) => {
     }
 };
 
-// Kiểm tra xem form có hợp lệ hay không
 const isFormValid = computed(() => {
     return formList.value.every((formItem) => validateForm(formItem));
 });
 
-// Xử lý khi nhấn "Tiếp"
+const isFormEmpty = computed(() => {
+    return formList.value.every((formItem) => {
+        return !formItem.company || !formItem.prevPosition || !formItem.startAt || !formItem.endAt;
+    });
+});
+
 const emitData = () => {
     isSubmitAttempted.value = true; // Đánh dấu rằng đã nhấn "Tiếp"
 
@@ -221,7 +253,6 @@ const emitData = () => {
 
     if (!isAllValid) return;
 
-    // Save data to localStorage
     const savedData = localStorage.getItem('experiencesFormData');
     const parsedData: FormItem[] = savedData ? JSON.parse(savedData) : [];
 

@@ -88,7 +88,6 @@ onMounted(() => {
 const validateForm = () => {
     let isValid = true;
 
-    // Validation for name
     if (!form.value.name) {
         errors.value.name = 'Họ và tên không được để trống.';
         isValid = false;
@@ -99,7 +98,6 @@ const validateForm = () => {
         errors.value.name = '';
     }
 
-    // Validation for dob
     if (!form.value.dob) {
         errors.value.dob = 'Ngày sinh không được để trống.';
         isValid = false;
@@ -107,7 +105,6 @@ const validateForm = () => {
         errors.value.dob = '';
     }
 
-    // Validation for city
     if (!form.value.city) {
         errors.value.city = 'Vui lòng chọn thành phố.';
         isValid = false;
@@ -115,7 +112,6 @@ const validateForm = () => {
         errors.value.city = '';
     }
 
-    // Validation for position
     if (!form.value.position) {
         errors.value.position = 'Vị trí làm việc không được để trống.';
         isValid = false;
@@ -126,7 +122,6 @@ const validateForm = () => {
         errors.value.position = '';
     }
 
-    // Validation for description
     if (form.value.description.length > 1000) {
         errors.value.description = 'Mô tả không được dài quá 1000 ký tự.';
         isValid = false;
