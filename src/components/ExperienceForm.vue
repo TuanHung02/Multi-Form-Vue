@@ -106,8 +106,6 @@
         <div class="btn-back" @click="backStep">Quay lại</div>
     </div>
 
-
-
 </template>
 
 <script setup lang="ts">

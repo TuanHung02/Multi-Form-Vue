@@ -1,111 +1,73 @@
 <template>
-  <div class="form-container" v-for="(formItem) in formList" :key="formItem.id">
-    <!-- Vị trí từng làm -->
-    <div class="form-input-company">
-      <div class="input">
-
-        <input type="text" v-model="formItem.company" :class="{ 'error-border': errors[formItem.id]?.company }" required
-          placeholder="Nhập tên công ty" @blur="validateForm(formItem)" />
-        <span v-if="errors[formItem.id]?.company" class="error-text"> {{ errors[formItem.id].company }}</span>
-      </div>
+  <div class="date-picker-wrapper">
+    <div class="date-picker-container">
+      <!-- DatePicker với icon và placeholder -->
+      <Datepicker style="width: 0px;" v-model="selectedDate" :format="format" placeholder="0000/00/00" input-class="custom-input"
+        ref="datepickerRef" />
+      <button class="icon-button" @click="openDatePicker">
+        <i class="calendar-icon">📅</i>
+      </button>
     </div>
+    <div>Ngày đã chọn: {{ formattedDate }}</div>
   </div>
-
-
-  <div class="add-company" @click="addCompany">
-    Thêm công ty</div>
-  <div class="btn" :disabled="!isFormValid" @click="isFormValid && emitData" :class="{ 'btn-active': isFormValid }">
-    Tiếp</div>
-
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, defineEmits, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed } from 'vue';
+import Datepicker from 'vue3-datepicker';
 
-const router = useRouter();
-const emit = defineEmits(['save-data']);
+const selectedDate = ref<Date | undefined>(undefined);
+const format = 'YYYY/MM/DD';
 
-interface FormItem {
-  id: number;
-  company: string;
-  errors: {
-    company?: string;
-  };
-}
+// Ref cho Datepicker
+const datepickerRef = ref<HTMLElement | null>(null);
+const formattedDate = computed(() => {
+  if (!selectedDate.value) return '0000/00/00';
 
-const formList = ref<FormItem[]>([{ id: 1, company: '', errors: {} }]);
+  // Tạo đối tượng Date và định dạng lại ngày thành YYYY/MM/DD
+  const year = selectedDate.value.getFullYear();
+  const month = String(selectedDate.value.getMonth() + 1).padStart(2, '0'); // Thêm '0' nếu tháng nhỏ hơn 10
+  const day = String(selectedDate.value.getDate()).padStart(2, '0'); // Thêm '0' nếu ngày nhỏ hơn 10
 
-onMounted(() => {
-  const savedData = localStorage.getItem('experiencesFormData');
-  if (savedData) {
-    formList.value = JSON.parse(savedData);
-  }
+  return `${year}/${month}/${day}`;
 });
 
-// Thêm hàm validate
-const errors = ref<{ [key: number]: { company?: string; } }>({});
-
-const validateForm = (formItem: FormItem) => {
-  const formErrors: { company?: string; prevPosition?: string; startAt?: string; endAt?: string; jd?: string } = {};
-  let isValid = true;
-
-  // Kiểm tra từng trường
-  if (!formItem.company || formItem.company.length > 100) {
-    formErrors.company = 'Tên công ty là bắt buộc và không quá 100 kí tự';
-    isValid = false;
+// Hàm mở dropdown khi click vào icon
+const openDatePicker = () => {
+  const dateInputElement = datepickerRef.value?.$el.querySelector('input') as HTMLInputElement;
+  if (dateInputElement) {
+    dateInputElement.focus(); // Focus vào input sẽ mở dropdown của DatePicker
   }
-
-  // Ghi nhận lỗi cho formItem hiện tại
-  errors.value[formItem.id] = formErrors;
-
-  return isValid;
-};
-
-
-const addCompany = () => {
-  const newId = formList.value.length + 1;
-  formList.value.push({
-    id: newId,
-    company: '',
-    errors: {}
-  });
-};
-
-
-const isFormValid = computed(() => {
-  return formList.value.every((formItem) => validateForm(formItem));
-});
-
-
-const emitData = () => {
-  let isAllValid = true;
-
-  formList.value.forEach((formItem) => {
-    const isValid = validateForm(formItem);
-    if (!isValid) {
-      isAllValid = false;
-    }
-  });
-
-  if (!isAllValid) return;
-
-  // Save data to localStorage
-  const savedData = localStorage.getItem('experiencesFormData');
-  const parsedData: FormItem[] = savedData ? JSON.parse(savedData) : [];
-
-  formList.value.forEach((formItem) => {
-    const existingItem = parsedData.find((item: FormItem) => item.id === formItem.id);
-    if (existingItem) {
-      Object.assign(existingItem, formItem);
-    } else {
-      parsedData.push(formItem);
-    }
-  });
-
-  localStorage.setItem('experiencesFormData', JSON.stringify(parsedData));
-
-  emit('save-data', formList.value, true);
-  router.push('/confirm');
 };
 </script>
+
+<style scoped>
+.date-picker-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.date-picker-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.custom-input {
+  width: 150px;
+  padding: 5px;
+  font-size: 14px;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.calendar-icon {
+  font-size: 20px;
+}
+</style>
