@@ -1,28 +1,24 @@
- <template>
+<template>
     <div class="container">
         <p class="title">Đơn ứng tuyển</p>
-
         <ul class="base-timeline">
             <!-- Bước 1 -->
-            <RouterLink to="/" :class="['base-timeline__item', isActive('/')]">
+            <RouterLink to="/" :class="['base-timeline__item', isActive('/'), isActive('/experience'), isActive('/confirm')]">
                 <span class="base-timeline__summary-text">Thông tin cá nhân</span>
             </RouterLink>
-
             <!-- Bước 2 -->
-            <RouterLink to="/experience" :class="['base-timeline__item', isActive('/experience')]">
+            <RouterLink to="/experience" :class="['base-timeline__item', isActive('/experience'), isActive('/confirm')]">
                 <span class="base-timeline__summary-text">Kinh nghiệm việc làm</span>
             </RouterLink>
-
             <!-- Bước 3 -->
-            <RouterLink to="/confirm" :class="['base-timeline__item', isActive('/confirm')]">
+            <RouterLink to="/confirm"
+                :class="['base-timeline__item', isActive('/confirm'), ]">
                 <span class="base-timeline__summary-text">Xác nhận thông tin</span>
             </RouterLink>
         </ul>
-
         <div class="content">
             <RouterView @save-data="saveData" />
         </div>
-
     </div>
 </template>
 
@@ -34,6 +30,8 @@ const route = useRoute();
 const isActive = (path: string) => {
     return route.path === path ? 'base-timeline__item--active' : '';
 };
+
+
 
 interface Experience {
     id: number;
@@ -57,7 +55,7 @@ const saveData = (data: Experience[], isExperienceForm = false) => {
         data.forEach((newExperience) => {
             const index = formData.value.experiences.findIndex(
                 (exp) => exp.id === newExperience.id
-            );  
+            );
             if (index !== -1) {
                 formData.value.experiences[index] = newExperience;
             } else {

@@ -92,6 +92,7 @@ const isFormValid = () => {
 const emitData = () => {
     localStorage.setItem('confirmFormData', JSON.stringify(form.value));
     emit('save-data', form.value);
+    alert('Successfully!')
 };
 </script>
 

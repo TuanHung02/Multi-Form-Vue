@@ -105,13 +105,6 @@ const validateForm = () => {
         errors.value.dob = '';
     }
 
-    if (!form.value.city) {
-        errors.value.city = 'Vui lòng chọn thành phố.';
-        isValid = false;
-    } else {
-        errors.value.city = '';
-    }
-
     if (!form.value.position) {
         errors.value.position = 'Vị trí làm việc không được để trống.';
         isValid = false;
@@ -137,13 +130,10 @@ const validateForm = () => {
 const isFormValid = () => {
     return form.value.name.length > 0 &&
         form.value.dob.length > 0 &&
-        form.value.city.length > 0 &&
         form.value.position.length > 0 &&
         !errors.value.name &&
         !errors.value.dob &&
-        !errors.value.city &&
-        !errors.value.position &&
-        !errors.value.description;
+        !errors.value.position 
 };
 
 const emitData = () => {

@@ -57,7 +57,7 @@
 
                     <span style="width: 118px;" v-if="errors[formItem.id]?.startAt" class="error-text"> {{
                         errors[formItem.id].startAt
-                    }}</span>
+                        }}</span>
                 </div>
 
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -99,8 +99,13 @@
             <path d="M12 3.75V20.25" stroke="#48647F" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         Thêm công ty</div>
-    <div class="btn" :disabled="!isFormValid || isFormEmpty" @click="emitData"
-        :class="{ 'btn-active': isFormValid && !isFormEmpty }">Tiếp</div>
+
+    <div style="display: flex; align-items: center; gap: 26px;">
+        <div class="btn" :disabled="!isFormValid || isFormEmpty" @click="emitData"
+            :class="{ 'btn-active': isFormValid && !isFormEmpty }">Tiếp</div>
+        <div class="btn-back" @click="backStep">Quay lại</div>
+    </div>
+
 
 
 </template>
@@ -219,6 +224,11 @@ const addCompany = () => {
         errors: {}
     });
 };
+
+const backStep = () => {
+    router.push('/');
+
+}
 
 // Xóa công ty
 const removeCompany = (id: number) => {
@@ -369,6 +379,27 @@ const emitData = () => {
     font-weight: 700;
     line-height: 24px;
     color: rgba(255, 255, 255, 1);
+    cursor: pointer;
+}
+
+.btn-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    padding: 10px 8px;
+    box-sizing: border-box;
+    min-width: 102px;
+    height: 40px;
+    gap: 0px;
+    border: none;
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 3px;
+    border: 1px solid rgba(220, 220, 220, 1);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    color: rgba(102, 102, 102, 1);
     cursor: pointer;
 }
 
