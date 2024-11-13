@@ -25,13 +25,11 @@
     </div>
     <div class="btn" :class="{ 'btn-active': isFormValid() }" :disabled="!isFormValid()" @click="validateForm">Hoàn
         thành</div>
-        <WelcomeItem/>
 
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import WelcomeItem from './WelcomeItem.vue';
 
 const emit = defineEmits(['save-data']);
 

@@ -28,6 +28,8 @@
                 <option value="Hà Nội">Hà Nội</option>
                 <option value="Hồ Chí Minh">Hồ Chí Minh</option>
                 <option value="Đà Nẵng">Đà Nẵng</option>
+                <option value="Hà Nội">Cần thơ</option>
+                <option value="Hồ Chí Minh">Nha Trang</option>
             </select>
         </div>
 
@@ -133,7 +135,7 @@ const isFormValid = () => {
         form.value.position.length > 0 &&
         !errors.value.name &&
         !errors.value.dob &&
-        !errors.value.position 
+        !errors.value.position
 };
 
 const emitData = () => {

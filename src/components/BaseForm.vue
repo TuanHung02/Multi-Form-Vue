@@ -3,16 +3,18 @@
         <p class="title">Đơn ứng tuyển</p>
         <ul class="base-timeline">
             <!-- Bước 1 -->
-            <RouterLink to="/" :class="['base-timeline__item', isActive('/'), isActive('/experience'), isActive('/confirm')]">
+            <RouterLink to="/"
+                :class="['base-timeline__item', isActive('/') ? 'base-timeline__item--active' : 'non-clickable', isActive('/experience'), isActive('/confirm')]">
                 <span class="base-timeline__summary-text">Thông tin cá nhân</span>
             </RouterLink>
             <!-- Bước 2 -->
-            <RouterLink to="/experience" :class="['base-timeline__item', isActive('/experience'), isActive('/confirm')]">
+            <RouterLink to="/experience"
+                :class="['base-timeline__item', isActive('/experience') ? 'base-timeline__item--active' : 'non-clickable', isActive('/confirm')]">
                 <span class="base-timeline__summary-text">Kinh nghiệm việc làm</span>
             </RouterLink>
             <!-- Bước 3 -->
             <RouterLink to="/confirm"
-                :class="['base-timeline__item', isActive('/confirm'), ]">
+                :class="['base-timeline__item', isActive('/confirm') ? 'base-timeline__item--active' : 'non-clickable']">
                 <span class="base-timeline__summary-text">Xác nhận thông tin</span>
             </RouterLink>
         </ul>
@@ -21,6 +23,7 @@
         </div>
     </div>
 </template>
+
 
 <script setup lang="ts">
 import { RouterLink, RouterView, useRoute } from 'vue-router';
@@ -74,6 +77,11 @@ const saveData = (data: Experience[], isExperienceForm = false) => {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap');
+
+.non-clickable {
+    pointer-events: none;
+    /* Optionally, adjust opacity or other styles to indicate it is disabled */
+}
 
 .container {
     margin: 0 auto;
