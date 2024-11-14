@@ -17,11 +17,12 @@
                 <p>Must</p>
                 <label for="salary">Mức lương mong muốn</label>
             </div>
-            <input class="input-info" type="text" id="salary" v-model="form.salary" required
-                :class="{ 'error-border': errors.salary }" placeholder="Nhập mức lương mong muốn" />
+            <input class="input-info input-salary" type="text" id="salary" v-model="form.salary" required
+                :class="{ 'error-border': errors.salary }" />
             <span v-if="errors.salary" class="error-text">{{ errors.salary }}</span>
-
+            <div class="unit-salary">VNĐ</div>
         </div>
+
     </div>
     <div class="btn" :class="{ 'btn-active': isFormValid() }" :disabled="!isFormValid()" @click="validateForm">Hoàn
         thành</div>
@@ -148,10 +149,29 @@ const emitData = () => {
 .form-group {
     margin-bottom: 24px;
     width: 528px;
+    position: relative;
 
     .input-info {
         height: 40px;
         border-radius: 4px;
+    }
+
+    .input-salary {
+        width: 150px;
+        padding-right: 40px;
+    }
+
+    .unit-salary {
+        position: absolute;
+        margin: 0 !important;
+        bottom: 15px;
+        left: 115px;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        text-align: left;
+        text-underline-position: from-font;
+        text-decoration-skip-ink: none;
 
     }
 
