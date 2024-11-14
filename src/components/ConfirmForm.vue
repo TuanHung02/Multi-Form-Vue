@@ -9,7 +9,6 @@
                 :class="{ 'error-border': errors.reason }"></textarea>
             <div>{{ form.reason.length }}/1000</div>
             <span v-if="errors.reason" class="error-text">{{ errors.reason }}</span>
-
         </div>
 
         <div class="form-group">
@@ -19,18 +18,14 @@
             </div>
             <div style="position: relative;">
                 <input class="input-info input-salary" type="text" id="salary" v-model="form.salary" required
-                    maxlength="10" :class="{ 'error-border': errors.salary }" />
+                    maxlength="10" :class="{ 'error-border': errors.salary }" @input="validateSalaryInput" />
                 <div class="unit-salary">VNĐ</div>
-
             </div>
-
             <span v-if="errors.salary" class="error-text">{{ errors.salary }}</span>
         </div>
-
     </div>
     <div class="btn" :class="{ 'btn-active': isFormValid() }" :disabled="!isFormValid()" @click="validateForm">Hoàn
         thành</div>
-
 </template>
 
 <script setup lang="ts">
@@ -57,15 +52,19 @@ onMounted(() => {
     }
 });
 
+// Function to validate salary input to allow only numeric values
+const validateSalaryInput = (event: Event) => {
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
+    form.value.salary = input.value;
+};
+
 const validateForm = () => {
     let isValid = true;
 
     // Validation for name
     if (!form.value.salary) {
         errors.value.salary = 'Mức lương mong muốn không được để trống.';
-        isValid = false;
-    } else if (form.value.salary.length > 100) {
-        errors.value.salary = 'Mức lương mong muốn không được dài quá 100 ký tự.';
         isValid = false;
     } else {
         errors.value.salary = '';
