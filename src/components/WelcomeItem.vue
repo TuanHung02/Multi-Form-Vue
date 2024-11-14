@@ -2,11 +2,9 @@
   <div class="date-picker-wrapper">
     <div class="date-picker-container">
       <!-- DatePicker với icon và placeholder -->
-      <Datepicker style="width: 0px;" v-model="selectedDate" :format="format" placeholder="0000/00/00" input-class="custom-input"
-        ref="datepickerRef" />
-      <button class="icon-button" @click="openDatePicker">
-        <i class="calendar-icon">📅</i>
-      </button>
+      <Datepicker style="width: 0px;" v-model="selectedDate" :format="format" placeholder="0000/00/00"
+        input-class="custom-input" ref="datepickerRef" />
+
     </div>
     <div>Ngày đã chọn: {{ formattedDate }}</div>
   </div>
@@ -33,12 +31,7 @@ const formattedDate = computed(() => {
 });
 
 // Hàm mở dropdown khi click vào icon
-const openDatePicker = () => {
-  const dateInputElement = datepickerRef.value?.$el.querySelector('input') as HTMLInputElement;
-  if (dateInputElement) {
-    dateInputElement.focus(); // Focus vào input sẽ mở dropdown của DatePicker
-  }
-};
+
 </script>
 
 <style scoped>
