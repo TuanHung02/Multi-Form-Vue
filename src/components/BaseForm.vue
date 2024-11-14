@@ -80,7 +80,6 @@ const saveData = (data: Experience[], isExperienceForm = false) => {
 
 .non-clickable {
     pointer-events: none;
-    /* Optionally, adjust opacity or other styles to indicate it is disabled */
 }
 
 .container {
