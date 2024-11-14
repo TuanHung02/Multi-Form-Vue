@@ -17,10 +17,14 @@
                 <p>Must</p>
                 <label for="salary">Mức lương mong muốn</label>
             </div>
-            <input class="input-info input-salary" type="text" id="salary" v-model="form.salary" required
-                :class="{ 'error-border': errors.salary }" />
+            <div style="position: relative;">
+                <input class="input-info input-salary" type="text" id="salary" v-model="form.salary" required
+                    maxlength="10" :class="{ 'error-border': errors.salary }" />
+                <div class="unit-salary">VNĐ</div>
+
+            </div>
+
             <span v-if="errors.salary" class="error-text">{{ errors.salary }}</span>
-            <!-- <div class="unit-salary">VNĐ</div> -->
         </div>
 
     </div>
@@ -149,7 +153,6 @@ const emitData = () => {
 .form-group {
     margin-bottom: 24px;
     width: 528px;
-    position: relative;
 
     .input-info {
         height: 40px;
@@ -157,7 +160,7 @@ const emitData = () => {
     }
 
     .input-salary {
-        width: 150px;
+        width: 119px;
         padding-right: 40px;
     }
 
@@ -165,7 +168,7 @@ const emitData = () => {
         position: absolute;
         margin: 0 !important;
         bottom: 15px;
-        left: 115px;
+        left: 82px;
         font-size: 14px;
         font-weight: 400;
         line-height: 20px;
@@ -217,7 +220,7 @@ const emitData = () => {
     box-sizing: border-box;
     border: 1px solid rgba(220, 220, 220, 1);
     outline: none;
-
+    border-radius: 4px;
 }
 
 .form-group textarea {
