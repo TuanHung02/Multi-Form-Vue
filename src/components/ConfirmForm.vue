@@ -20,7 +20,7 @@
             <input class="input-info input-salary" type="text" id="salary" v-model="form.salary" required
                 :class="{ 'error-border': errors.salary }" />
             <span v-if="errors.salary" class="error-text">{{ errors.salary }}</span>
-            <div class="unit-salary">VNĐ</div>
+            <!-- <div class="unit-salary">VNĐ</div> -->
         </div>
 
     </div>

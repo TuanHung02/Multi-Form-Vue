@@ -10,7 +10,8 @@
             </div>
             <!-- SVG trash icon để xóa -->
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
-                @click="removeCompany(formItem.id)" style="cursor: pointer;">
+                @click="removeCompany(formItem.id)" :class="{ disableBtn: formList.length <= 1 }"
+                style="cursor: pointer;">
                 <path d="M26.9995 7L4.99951 7.00001" stroke="#333333" stroke-linecap="round" stroke-linejoin="round" />
                 <path d="M13 13V21" stroke="#333333" stroke-linecap="round" stroke-linejoin="round" />
                 <path d="M19 13V21" stroke="#333333" stroke-linecap="round" stroke-linejoin="round" />
@@ -57,7 +58,7 @@
 
                     <span style="width: 118px;" v-if="errors[formItem.id]?.startAt" class="error-text"> {{
                         errors[formItem.id].startAt
-                        }}</span>
+                    }}</span>
                 </div>
 
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -283,6 +284,11 @@ const emitData = () => {
 
 
 <style scoped>
+.disableBtn {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
 .form-container {
     margin: 0 auto 24px auto;
     border: 1px solid rgba(220, 220, 220, 1);
