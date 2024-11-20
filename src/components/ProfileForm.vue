@@ -6,7 +6,7 @@
                 <label>Họ và tên</label>
             </div>
             <input id="name" class="input-info" v-model="form.name" :class="{ 'error-border': errors.name }"
-                placeholder="Nhập họ và tên" />
+                placeholder="Nhập họ và tên" @blur="validateName" />
             <span v-if="errors.name" class="error-text">{{ errors.name }}</span>
         </div>
 
@@ -15,7 +15,8 @@
                 <p>Must</p>
                 <label>Ngày sinh</label>
             </div>
-            <input type="date" id="dob" class="input-info" v-model="form.dob" :class="{ 'error-border': errors.dob }" />
+            <input type="date" id="dob" class="input-info" v-model="form.dob" :class="{ 'error-border': errors.dob }"
+                @blur="validateDob" />
             <span v-if="errors.dob" class="error-text">{{ errors.dob }}</span>
         </div>
 
@@ -28,8 +29,8 @@
                 <option value="Hà Nội">Hà Nội</option>
                 <option value="Hồ Chí Minh">Hồ Chí Minh</option>
                 <option value="Đà Nẵng">Đà Nẵng</option>
-                <option value="Hà Nội">Cần thơ</option>
-                <option value="Hồ Chí Minh">Nha Trang</option>
+                <option value="Cần Thơ">Cần Thơ</option>
+                <option value="Nha Trang">Nha Trang</option>
             </select>
         </div>
 
@@ -39,7 +40,7 @@
                 <label>Vị trí làm việc</label>
             </div>
             <input id="position" class="input-info" v-model="form.position" :class="{ 'error-border': errors.position }"
-                placeholder="Nhập vị trí bạn muốn làm việc" />
+                placeholder="Nhập vị trí bạn muốn làm việc" @blur="validatePosition" />
             <span v-if="errors.position" class="error-text">{{ errors.position }}</span>
         </div>
 
@@ -48,7 +49,7 @@
                 <label for="description">Mô tả bản thân</label>
             </div>
             <textarea id="description" v-model="form.description" maxlength="1000" placeholder="Mô tả về bản thân"
-                :class="{ 'error-border': errors.description }"></textarea>
+                :class="{ 'error-border': errors.description }" @blur="validateDescription"></textarea>
             <div>{{ form.description.length }}/1000</div>
             <span v-if="errors.description" class="error-text">{{ errors.description }}</span>
         </div>
@@ -56,6 +57,7 @@
     <div class="btn" :class="{ 'btn-active': isFormValid() }" :disabled="!isFormValid()" @click="validateForm">Tiếp
     </div>
 </template>
+
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
@@ -87,45 +89,39 @@ onMounted(() => {
     }
 });
 
-const validateForm = () => {
-    let isValid = true;
-
+const validateName = () => {
     if (!form.value.name) {
         errors.value.name = 'Họ và tên không được để trống.';
-        isValid = false;
     } else if (form.value.name.length > 100) {
         errors.value.name = 'Họ và tên không được dài quá 100 ký tự.';
-        isValid = false;
     } else {
         errors.value.name = '';
     }
+};
 
+const validateDob = () => {
     if (!form.value.dob) {
         errors.value.dob = 'Ngày sinh không được để trống.';
-        isValid = false;
     } else {
         errors.value.dob = '';
     }
+};
 
+const validatePosition = () => {
     if (!form.value.position) {
         errors.value.position = 'Vị trí làm việc không được để trống.';
-        isValid = false;
     } else if (form.value.position.length > 100) {
         errors.value.position = 'Vị trí làm việc không được dài quá 100 ký tự.';
-        isValid = false;
     } else {
         errors.value.position = '';
     }
+};
 
+const validateDescription = () => {
     if (form.value.description.length > 1000) {
         errors.value.description = 'Mô tả không được dài quá 1000 ký tự.';
-        isValid = false;
     } else {
         errors.value.description = '';
-    }
-
-    if (isValid) {
-        emitData();
     }
 };
 
@@ -135,7 +131,18 @@ const isFormValid = () => {
         form.value.position.length > 0 &&
         !errors.value.name &&
         !errors.value.dob &&
-        !errors.value.position
+        !errors.value.position;
+};
+
+const validateForm = () => {
+    validateName();
+    validateDob();
+    validatePosition();
+    validateDescription();
+
+    if (isFormValid()) {
+        emitData();
+    }
 };
 
 const emitData = () => {
@@ -144,6 +151,7 @@ const emitData = () => {
     router.push('/experience');
 };
 </script>
+
 
 <style scoped>
 .form-container {

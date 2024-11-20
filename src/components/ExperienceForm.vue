@@ -58,7 +58,7 @@
 
                     <span style="width: 118px;" v-if="errors[formItem.id]?.startAt" class="error-text"> {{
                         errors[formItem.id].startAt
-                    }}</span>
+                        }}</span>
                 </div>
 
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

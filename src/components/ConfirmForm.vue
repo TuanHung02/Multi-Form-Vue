@@ -5,8 +5,9 @@
                 <p>Must</p>
                 <label for="reason">Lý do muốn ứng tuyển vào công ty</label>
             </div>
-            <textarea id="reason" v-model="form.reason" maxlength="1000" placeholder="Mô tả về bản thân"
-                :class="{ 'error-border': errors.reason }"></textarea>
+            <textarea id="reason" v-model="form.reason" placeholder="Mô tả về bản thân"
+                :class="{ 'error-border': errors.reason }" @blur="validateReason" />
+
             <div>{{ form.reason.length }}/1000</div>
             <span v-if="errors.reason" class="error-text">{{ errors.reason }}</span>
         </div>
@@ -18,7 +19,9 @@
             </div>
             <div style="position: relative;">
                 <input class="input-info input-salary" type="text" id="salary" v-model="form.salary" required
-                    maxlength="10" :class="{ 'error-border': errors.salary }" @input="validateSalaryInput" />
+                    maxlength="10" :class="{ 'error-border': errors.salary }" @input="validateSalaryInput"
+                    @blur="validateSalary" />
+
                 <div class="unit-salary">VNĐ</div>
             </div>
             <span v-if="errors.salary" class="error-text">{{ errors.salary }}</span>
@@ -82,6 +85,25 @@ const validateForm = () => {
 
     if (isValid) {
         emitData();
+    }
+};
+// Validate lý do muốn ứng tuyển vào công ty
+const validateReason = () => {
+    if (!form.value.reason) {
+        errors.value.reason = 'Lý do muốn ứng tuyển vào công ty không được để trống.';
+    } else if (form.value.reason.length > 1000) {
+        errors.value.reason = 'Lý do muốn ứng tuyển vào công ty không được dài quá 1000 ký tự.';
+    } else {
+        errors.value.reason = '';
+    }
+};
+
+// Validate mức lương mong muốn
+const validateSalary = () => {
+    if (!form.value.salary) {
+        errors.value.salary = 'Mức lương mong muốn không được để trống.';
+    } else {
+        errors.value.salary = '';
     }
 };
 
